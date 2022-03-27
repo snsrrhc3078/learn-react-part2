@@ -16,16 +16,32 @@ import { useState, useEffect } from "react";
 
 function App() {
   const [counter, setCounter] = useState(0);
+  const [keyword, setKeyword] = useState("");
   const onClick = () => {
     setCounter((current) => current + 2);
   };
-  console.log("i run all the time");
-  const iRunOnlyOnce = () => {
-    console.log("i run only once");
+
+  const onChange = (event) => {
+    setKeyword((current) => event.target.value);
   };
-  useEffect(iRunOnlyOnce, []);
+
+  useEffect(() => {
+    console.log("i run only once");
+  }, []);
+  useEffect(() => {
+    console.log("i run when 'keyword' changes");
+  }, [keyword]);
+  useEffect(() => {
+    console.log("i run when 'counter' changes");
+  }, [counter]);
   return (
     <div>
+      <input
+        value={keyword}
+        onChange={onChange}
+        type="text"
+        placeholder="Serach here..."
+      ></input>
       <h1>{counter}</h1>
       <button onClick={onClick}>click</button>
     </div>
