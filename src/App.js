@@ -1,54 +1,32 @@
-// import Button from "./Button";
-// import styles from "./App.module.css";
-
-// function App() {
-//   return (
-//     <div>
-//       <h1 className={styles.title}>Welcome back!</h1>
-//       <Button text="continue" />
-//     </div>
-//   );
-// }
-
-// export default App;
-
 import { useState, useEffect } from "react";
 
 function App() {
-  const [toDo, setToDo] = useState("");
-  const [toDos, setToDos] = useState([]);
-  const onChange = (event) => {
-    setToDo((current) => event.target.value);
-  };
-  const onSubmit = (event) => {
-    event.preventDefault();
-    if (toDo === "") {
-      return;
-    }
-    setToDos((current) => {
-      return [toDo, ...current];
-    });
-    setToDo((current) => "");
-  };
-  console.log(toDos);
+  const [loading, setLoading] = useState(true);
+  const [coins, setCoins] = useState([]);
+  useEffect(() => {
+    fetch("https://api.coinpaprika.com/v1/tickers")
+      .then((response) => response.json())
+      .then((json) => {
+        setCoins((pre) => json);
+        setLoading(false);
+      });
+  }, []);
   return (
     <div>
-      <h1>My To Dos ({toDos.length})</h1>
-      <form onSubmit={onSubmit}>
-        <input
-          onChange={onChange}
-          value={toDo}
-          type="text"
-          placeholder="Write your to do..."
-        ></input>
-        <button>add To Do</button>
-      </form>
-      <hr />
-      <ul>
-        {toDos.map((item, index) => (
-          <li key={index}>{item}</li>
+      <h1>The Coins! {loading ? "" : `(${coins.length})`}</h1>
+      {loading ? (
+        <strong>Loading...</strong>
+      ) : (
+        <input type="text" list="list" placeholder="Search For coins"></input>
+      )}
+
+      <datalist id="list">
+        {coins.map((item) => (
+          <option>
+            {item.name} ({item.symbol}) : {item.quotes.USD.price.toFixed(2)}USD
+          </option>
         ))}
-      </ul>
+      </datalist>
     </div>
   );
 }
